@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    test,jia yige 
+    test,wo yao zai ceshi 
     <router-view/>
     <!-- <router-view/> -->
   </div>
