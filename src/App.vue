@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    hrigit
+    test
     <router-view/>
     <!-- <router-view/> -->
   </div>
