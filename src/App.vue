@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    test
+    test,jia yige 
     <router-view/>
     <!-- <router-view/> -->
   </div>
