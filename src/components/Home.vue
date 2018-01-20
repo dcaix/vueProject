@@ -1,9 +1,10 @@
 <template>
   <el-container>
-    <el-aside width="aoto">
+    <el-aside width="auto">
         <div class="logo"></div>
         <el-col :span="24">
             <el-menu
+              router
               default-active="2"
               class="el-menu-vertical-demo"
               @open="handleOpen"
@@ -18,7 +19,7 @@
                   <i class="el-icon-location"></i>
                   <span>用户管理</span>
                 </template>
-                <el-menu-item index='1-1'>
+                <el-menu-item index='/users'>
                     <i class="el-icon-menu"></i>
                     <span slot="title">用户列表</span>
                   </el-menu-item>
@@ -89,10 +90,7 @@
         后台管理系统
       </el-header>
       <el-main>
-        <p>Main</p>
-        <p>Main</p>
-        <p>Main</p>
-        <p>Main</p>
+       <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -124,7 +122,7 @@ export default {
 }
 
 </script>
-<style>
+<style scoped>
   .logo{
     height:60px;
     background: url(../assets/logo.png);
