@@ -9,8 +9,28 @@
         <el-input placeholder="请输入内容"  class="input-with-select search">
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="success" plain>添加用户</el-button>
-      </div>
+            <el-button type="success"  @click = "openAddDialog = true" plain>添加用户</el-button>
+            <el-dialog title="添加用户" :visible.sync="openAddDialog">
+                <el-form :model="form" ref="form"  status-icon :rules="rules">
+                  <el-form-item label="用户名称" prop='username' >
+                    <el-input v-model="form.username"></el-input>
+                  </el-form-item>
+                  <el-form-item label="用户密码" prop="password" >
+                      <el-input v-model="form.password" type='password'></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮箱" >
+                        <el-input v-model="form.email" ></el-input>
+                      </el-form-item>
+                      <el-form-item label="手机号" >
+                          <el-input v-model="form.mobile"></el-input>
+                        </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                  <el-button @click="cancelButton">取 消</el-button>
+                  <el-button type="primary" @click="confirmButton">添 加</el-button>
+                </div>
+              </el-dialog>
+          </div>
       <el-table
       border
       header-align="center"
@@ -70,7 +90,7 @@
   </div>
 </template>
 <script>
-import {getUsersData, toggleUserState} from '../../api/api.js'
+import {getUsersData, toggleUserState, addUser} from '../../api/api.js'
 
 export default {
   data () {
@@ -79,7 +99,27 @@ export default {
       currentPage: 1,
       pagesize: 5,
       users: [],
-      total: 0
+      total: 0,
+      openAddDialog: false,
+      form: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      },
+      rules: {
+        username: [{
+          required: true,
+          message: '请输入用户名',
+          trigger: 'blur'
+        }],
+        password: [{
+          required: true,
+          message: '请输入密码',
+          trigger: 'blur'
+        }]
+      },
+      formLabelWidth: '120px'
     }
   },
   methods: {
@@ -94,6 +134,7 @@ export default {
         if (data.meta.status === 200) {
           _that.users = data.data.users
           _that.total = data.data.total
+          console.log(data)
         }
       })
     },
@@ -121,6 +162,35 @@ export default {
       // 改变当前页码
       this.currentPage = val
       this.userList()
+    },
+    cancelButton () {
+      this.$message({
+        type: 'warning',
+        message: '已取消添加'
+      })
+      this.openAddDialog = false
+    },
+    // 添加用户
+    confirmButton () {
+      this.$refs['form'].validate(valid => {
+        if (valid) {
+          addUser(this.form).then((data) => {
+            console.log(data)
+            if (data.meta.status === 201) {
+              this.$message({
+                type: 'success',
+                message: '添加成功'
+              })
+              this.openAddDialog = false
+            } else {
+              this.$message({
+                type: 'error',
+                message: data.meta.msg
+              })
+            }
+          })
+        }
+      })
     }
   },
   mounted () {

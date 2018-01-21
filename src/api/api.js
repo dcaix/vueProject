@@ -39,3 +39,10 @@ export const toggleUserState = (params) => {
     return res.data
   })
 }
+
+// 添加用户
+export const addUser = (params) => {
+  return axios.post('users', params).then((res) => {
+    return res.data
+  })
+}
