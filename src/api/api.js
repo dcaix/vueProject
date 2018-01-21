@@ -46,3 +46,10 @@ export const addUser = (params) => {
     return res.data
   })
 }
+
+// 删除用户 deleUser
+export const deleUser = (id) => {
+  return axios.delete('users/' + id).then((res) => {
+    return res.data
+  })
+}

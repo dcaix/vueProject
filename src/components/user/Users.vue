@@ -68,13 +68,13 @@
         </template>
     </el-table-column>
     <el-table-column
-    width ='200'
+    width ='270'
     prop="address"
     label="操作">
     <template slot-scope="scope">
-        <el-button size='small' type="primary" icon="el-icon-edit"></el-button>
-        <el-button size='small' type="primary" icon="el-icon-edit"></el-button>
-        <el-button size='small' type="primary" icon="el-icon-edit"></el-button>
+        <el-button size='small' type="primary" icon="el-icon-edit" @click="editUser(scope.row.id)">编辑</el-button>
+        <el-button size='small' type="danger" icon="el-icon-delete" @click="deleUser(scope.row.id)">删除</el-button>
+        <el-button size='small' type="primary" icon="el-icon-edit">设置</el-button>
       </template>
   </el-table-column>
     </el-table>
@@ -90,7 +90,7 @@
   </div>
 </template>
 <script>
-import {getUsersData, toggleUserState, addUser} from '../../api/api.js'
+import {getUsersData, toggleUserState, addUser, deleUser} from '../../api/api.js'
 
 export default {
   data () {
@@ -134,7 +134,6 @@ export default {
         if (data.meta.status === 200) {
           _that.users = data.data.users
           _that.total = data.data.total
-          console.log(data)
         }
       })
     },
@@ -150,7 +149,6 @@ export default {
             type: 'success'
           })
         }
-        console.log(res)
       })
     },
     handleSizeChange (val) {
@@ -175,13 +173,13 @@ export default {
       this.$refs['form'].validate(valid => {
         if (valid) {
           addUser(this.form).then((data) => {
-            console.log(data)
             if (data.meta.status === 201) {
               this.$message({
                 type: 'success',
                 message: '添加成功'
               })
               this.openAddDialog = false
+              this.userList()
             } else {
               this.$message({
                 type: 'error',
@@ -189,6 +187,21 @@ export default {
               })
             }
           })
+        }
+      })
+    },
+    // 编辑用户
+    editUser (id) {
+      console.log(id)
+    },
+    deleUser (id) {
+      deleUser(id).then((data) => {
+        if (data.meta.status === 200) {
+          this.$message({
+            type: 'success',
+            message: '删除成功'
+          })
+          this.userList()
         }
       })
     }
