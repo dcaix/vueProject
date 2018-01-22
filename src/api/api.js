@@ -2,9 +2,9 @@ import axios from 'axios'
 
 // 设置请求基准路径
 // 远程地址
-axios.defaults.baseURL = 'http://47.96.21.88:8888/api/private/v1/'
+// axios.defaults.baseURL = 'http://47.96.21.88:8888/api/private/v1/'
 // 本地请求地址
-// axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
+axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/'
 // 登录拦截
 // 发送请求时拦截器处理token
 axios.interceptors.request.use(function (config) {
@@ -50,6 +50,20 @@ export const addUser = (params) => {
 // 删除用户 deleUser
 export const deleUser = (id) => {
   return axios.delete('users/' + id).then((res) => {
+    return res.data
+  })
+}
+
+// 根据id获取用户信息
+export const getUser4id = (id) => {
+  return axios.get('users/' + id).then((res) => {
+    return res.data
+  })
+}
+
+// 编辑用户提交 confirmEdit
+export const confirmEdit = (params) => {
+  return axios.put('users/' + params.id, params).then((res) => {
     return res.data
   })
 }

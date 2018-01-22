@@ -10,27 +10,7 @@
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
             <el-button type="success"  @click = "openAddDialog = true" plain>添加用户</el-button>
-            <el-dialog title="添加用户" :visible.sync="openAddDialog">
-                <el-form :model="form" ref="form"  status-icon :rules="rules">
-                  <el-form-item label="用户名称" prop='username' >
-                    <el-input v-model="form.username"></el-input>
-                  </el-form-item>
-                  <el-form-item label="用户密码" prop="password" >
-                      <el-input v-model="form.password" type='password'></el-input>
-                    </el-form-item>
-                    <el-form-item label="邮箱" >
-                        <el-input v-model="form.email" ></el-input>
-                      </el-form-item>
-                      <el-form-item label="手机号" >
-                          <el-input v-model="form.mobile"></el-input>
-                        </el-form-item>
-                </el-form>
-                <div slot="footer" class="dialog-footer">
-                  <el-button @click="cancelButton">取 消</el-button>
-                  <el-button type="primary" @click="confirmButton">添 加</el-button>
-                </div>
-              </el-dialog>
-          </div>
+         </div>
       <el-table
       border
       header-align="center"
@@ -87,10 +67,52 @@
     layout="total, sizes, prev, pager, next, jumper"
     :total="total">
   </el-pagination>
+
+  <!-- 添加用户信息的弹出对话框 -->
+  <el-dialog title="添加用户" :visible.sync="openAddDialog">
+      <el-form :model="form" ref="form"  status-icon :rules="rules">
+        <el-form-item label="用户名称" prop='username' >
+          <el-input v-model="form.username"></el-input>
+        </el-form-item>
+        <el-form-item label="用户密码" prop="password" >
+            <el-input v-model="form.password" type='password'></el-input>
+          </el-form-item>
+          <el-form-item label="邮箱" >
+              <el-input v-model="form.email" ></el-input>
+            </el-form-item>
+            <el-form-item label="手机号" >
+                <el-input v-model="form.mobile"></el-input>
+              </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelButton">取 消</el-button>
+        <el-button type="primary" @click="confirmButton">添 加</el-button>
+      </div>
+    </el-dialog>
+
+  <!-- 编辑用户信息的弹出对话框 -->
+  <el-dialog title="编辑用户" :visible.sync="openEditDialog">
+      <el-form :model="editform" ref="editform"  status-icon>
+        <el-form-item label="用户名">
+          <el-input v-model="editform.username" disabled></el-input>
+        </el-form-item>
+          <el-form-item label="邮箱">
+              <el-input v-model="editform.email" ></el-input>
+            </el-form-item>
+            <el-form-item label="手机号" >
+                <el-input v-model="editform.mobile"></el-input>
+              </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelButton">取 消</el-button>
+        <el-button type="primary" @click="confirmEditButton">确认修改</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 <script>
-import {getUsersData, toggleUserState, addUser, deleUser} from '../../api/api.js'
+import {getUsersData, toggleUserState, addUser, deleUser, getUser4id, confirmEdit} from '../../api/api.js'
 
 export default {
   data () {
@@ -101,9 +123,16 @@ export default {
       users: [],
       total: 0,
       openAddDialog: false,
+      openEditDialog: false,
       form: {
         username: '',
         password: '',
+        email: '',
+        mobile: ''
+      },
+      editform: {
+        id: '',
+        username: '',
         email: '',
         mobile: ''
       },
@@ -164,9 +193,10 @@ export default {
     cancelButton () {
       this.$message({
         type: 'warning',
-        message: '已取消添加'
+        message: '已取消操作'
       })
       this.openAddDialog = false
+      this.openEditDialog = false
     },
     // 添加用户
     confirmButton () {
@@ -190,9 +220,37 @@ export default {
         }
       })
     },
-    // 编辑用户
+    // 编辑用户的对话框展示逻辑
     editUser (id) {
-      console.log(id)
+      let _that = this
+      this.openEditDialog = true
+      getUser4id(id).then(function (data) {
+        if (data.meta.status === 200) {
+          _that.editform.id = data.data.id
+          _that.editform.username = data.data.username
+          _that.editform.email = data.data.email
+          _that.editform.mobile = data.data.mobile
+        } else {
+          this.$message({
+            type: 'error',
+            message: data.meta.msg
+          })
+        }
+      })
+    },
+    // 确认辑用户
+    confirmEditButton () {
+      var _that = this
+      confirmEdit(this.editform).then(function (data) {
+        if (data.meta.status === 200) {
+          _that.$message({
+            type: 'success',
+            message: '修改成功'
+          })
+          _that.userList()
+          _that.openEditDialog = false
+        }
+      })
     },
     deleUser (id) {
       deleUser(id).then((data) => {
