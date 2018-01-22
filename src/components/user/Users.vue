@@ -6,8 +6,8 @@
       <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
      <div>
-        <el-input placeholder="请输入内容"  class="input-with-select search">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input placeholder="请输入内容" v-model="query" class="input-with-select search">
+          <el-button slot="append" icon="el-icon-search"  @click="userList" ></el-button>
         </el-input>
             <el-button type="success"  @click = "openAddDialog = true" plain>添加用户</el-button>
          </div>
@@ -118,6 +118,7 @@ export default {
   data () {
     return {
       mg_state: '',
+      query: '',
       currentPage: 1,
       pagesize: 5,
       users: [],
@@ -154,9 +155,10 @@ export default {
   methods: {
     userList () {
       // 初始化数据列表
+      console.log(1)
       var _that = this
       getUsersData({
-        query: '',
+        query: this.query,
         pagenum: this.currentPage,
         pagesize: this.pagesize
       }).then(function (data) {
@@ -231,7 +233,7 @@ export default {
           _that.editform.email = data.data.email
           _that.editform.mobile = data.data.mobile
         } else {
-          this.$message({
+          _that.$message({
             type: 'error',
             message: data.meta.msg
           })
@@ -249,6 +251,11 @@ export default {
           })
           _that.userList()
           _that.openEditDialog = false
+        } else {
+          _that.$message({
+            type: 'error',
+            message: data.meta.msg
+          })
         }
       })
     },
