@@ -67,3 +67,16 @@ export const confirmEdit = (params) => {
     return res.data
   })
 }
+
+// 权限管理-角色列表
+export const roleList = () => {
+  return axios.get('roles').then(res => {
+    return res.data
+  })
+}
+// 用户管理-分配角色
+export const giveRole = (params) => {
+  return axios.put('users/' + params.id + '/role', params).then(res => {
+    return res.data
+  })
+}

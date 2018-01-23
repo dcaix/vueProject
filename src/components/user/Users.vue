@@ -48,13 +48,13 @@
         </template>
     </el-table-column>
     <el-table-column
-    width ='270'
+    width ='300'
     prop="address"
     label="操作">
     <template slot-scope="scope">
         <el-button size='small' type="primary" icon="el-icon-edit" @click="editUser(scope.row.id)">编辑</el-button>
         <el-button size='small' type="danger" icon="el-icon-delete" @click="deleUser(scope.row.id)">删除</el-button>
-        <el-button size='small' type="primary" icon="el-icon-edit">设置</el-button>
+        <el-button size='small' type="primary" icon="el-icon-edit" @click='giveUserRole(scope.row)'>设置角色</el-button>
       </template>
   </el-table-column>
     </el-table>
@@ -88,7 +88,7 @@
         <el-button @click="cancelButton">取 消</el-button>
         <el-button type="primary" @click="confirmButton">添 加</el-button>
       </div>
-    </el-dialog>
+  </el-dialog>
 
   <!-- 编辑用户信息的弹出对话框 -->
   <el-dialog title="编辑用户" :visible.sync="openEditDialog">
@@ -107,12 +107,32 @@
         <el-button @click="cancelButton">取 消</el-button>
         <el-button type="primary" @click="confirmEditButton">确认修改</el-button>
       </div>
+  </el-dialog>
+
+      <!-- 分配角色弹窗 -->
+      <el-dialog
+      title="编辑用户"
+      :visible="dialogVisible4Role"
+      width="50%">
+      <div><span>当前用户名：</span><span>{{currentUser.username}}</span></div>
+      <span>请选择角色：</span><el-select v-model="currentRole" placeholder="请选择">
+        <el-option
+          v-for="item in roleList"
+          :key="item.id"
+          :label="item.roleName"
+          :value="item.id">
+        </el-option>
+      </el-select>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible4Role = false">取 消</el-button>
+        <el-button type="primary" @click="submitUser4Role">确 定</el-button>
+      </span>
     </el-dialog>
 
   </div>
 </template>
 <script>
-import {getUsersData, toggleUserState, addUser, deleUser, getUser4id, confirmEdit} from '../../api/api.js'
+import {getUsersData, giveRole, toggleUserState, addUser, deleUser, getUser4id, confirmEdit, roleList} from '../../api/api.js'
 
 export default {
   data () {
@@ -125,18 +145,12 @@ export default {
       total: 0,
       openAddDialog: false,
       openEditDialog: false,
-      form: {
-        username: '',
-        password: '',
-        email: '',
-        mobile: ''
-      },
-      editform: {
-        id: '',
-        username: '',
-        email: '',
-        mobile: ''
-      },
+      dialogVisible4Role: false,
+      form: {},
+      editform: {},
+      currentUser: {},
+      currentRole: '',
+      roleList: [],
       rules: {
         username: [{
           required: true,
@@ -155,7 +169,6 @@ export default {
   methods: {
     userList () {
       // 初始化数据列表
-      console.log(1)
       var _that = this
       getUsersData({
         query: this.query,
@@ -178,6 +191,11 @@ export default {
           this.$message({
             message: res.meta.msg,
             type: 'success'
+          })
+        } else {
+          this.$message({
+            message: res.meta.msg,
+            type: 'error'
           })
         }
       })
@@ -228,10 +246,7 @@ export default {
       this.openEditDialog = true
       getUser4id(id).then(function (data) {
         if (data.meta.status === 200) {
-          _that.editform.id = data.data.id
-          _that.editform.username = data.data.username
-          _that.editform.email = data.data.email
-          _that.editform.mobile = data.data.mobile
+          _that.editform = data.data
         } else {
           _that.$message({
             type: 'error',
@@ -267,6 +282,31 @@ export default {
             message: '删除成功'
           })
           this.userList()
+        }
+      })
+    },
+    giveUserRole (data) {
+    // 获取当前用户的编辑角色对话框
+      this.dialogVisible4Role = true
+      this.currentUser = data
+      // 初始化下拉选项数据
+      roleList().then(res => {
+        if (res.meta.status === 200) {
+          this.roleList = res.data
+        }
+      })
+    },
+    submitUser4Role () {
+      // 用户分配角色
+      giveRole({id: this.currentUser.id, rid: this.currentRole}).then(res => {
+        if (res.meta.status === 200) {
+          // 隐藏弹窗
+          this.dialogVisible4Role = false
+          // 提示
+          this.$message({
+            type: 'success',
+            message: res.meta.msg
+          })
         }
       })
     }
