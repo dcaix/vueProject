@@ -74,9 +74,59 @@ export const roleList = () => {
     return res.data
   })
 }
+
+// 权限管理-添加角色
+export const addRole = (params) => {
+  return axios.post('roles', params).then(res => {
+    return res.data
+  })
+}
+
 // 用户管理-分配角色
 export const giveRole = (params) => {
   return axios.put('users/' + params.id + '/role', params).then(res => {
+    return res.data
+  })
+}
+
+// 权限管理-根据id查询角色信息
+export const getRoleById = (params) => {
+  return axios.get('roles/' + params.id).then(res => {
+    return res.data
+  })
+}
+
+// 权限管理-编辑角色
+export const editRole = (params) => {
+  return axios.put('roles/' + params.id, params).then(res => {
+    return res.data
+  })
+}
+
+// 权限管理-删除角色
+export const deleteRole = (params) => {
+  return axios.delete('roles/' + params.id).then(res => {
+    return res.data
+  })
+}
+
+// 权限管理-删除指定角色的权限
+export const deleteRoleRight = (params) => {
+  return axios.delete('roles/' + params.roleId + '/rights/' + params.rightId).then(res => {
+    return res.data
+  })
+}
+
+// 权限管理-提交角色授权
+export const submitGrant = (params) => {
+  return axios.post('roles/' + params.roleId + '/rights', params).then(res => {
+    return res.data
+  })
+}
+
+// 权限管理-权限列表
+export const rightList = (params) => {
+  return axios.get('rights/' + params.type).then(res => {
     return res.data
   })
 }
