@@ -150,9 +150,25 @@ export const getCateById = (params) => {
     return res.data
   })
 }
-// getParams
+// getParams  获取分类参数列表
 export const getParams = (params) => {
   return axios.get('categories/' + params.id + '/attributes', {params}).then(res => {
+    return res.data
+  })
+}
+// 添加分类参数
+export const addParam = (params) => {
+  return axios.post('categories/' + params.id + '/attributes', params).then(res => {
+    return res.data
+  })
+}
+// addVal.attrId = id
+// addVal.attr_sel = 'many'
+// addVal.attr_vals = this.inputAdd
+
+// 编辑分类参数 attr_vals
+export const editParam = (params) => {
+  return axios.put('categories/' + params.cat_id + '/attributes/' + params.attr_id, params).then(res => {
     return res.data
   })
 }
