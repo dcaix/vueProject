@@ -143,3 +143,16 @@ export const addCate = (params) => {
     return res.data
   })
 }
+
+// 商品分类-根据id查询分类信息
+export const getCateById = (params) => {
+  return axios.get('categories/' + params.id).then(res => {
+    return res.data
+  })
+}
+// getParams
+export const getParams = (params) => {
+  return axios.get('categories/' + params.id + '/attributes', {params}).then(res => {
+    return res.data
+  })
+}

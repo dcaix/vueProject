@@ -44,12 +44,36 @@
         <el-button @click="dialogVisible4Add = false">取 消</el-button>
         <el-button type="primary" @click="submitCate">确 定</el-button>
       </span>
-    </el-dialog>
+      </el-dialog>
+
+         <!-- 编辑分类弹窗 -->
+    <el-dialog
+    title="编辑分类"
+    :visible="dialogVisible4Edit"
+    width="50%">
+    <div>
+      <span>分类名称：</span>
+      <el-input class='cname' v-model="ecate.cat_name"></el-input>
+    </div>
+    <!-- <div>
+      <span>父级分类：</span>
+      <el-cascader
+        :options="ecateList"
+        v-model="eselectedOptions"
+        :props='propsDefine'
+        :show-all-levels="false">
+      </el-cascader>
+    </div> -->
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="dialogVisible4Edit = false">取 消</el-button>
+      <el-button type="primary" @click="submitCate4Edit">确 定</el-button>
+    </span>
+  </el-dialog>
   </div>
 </template>
 <script>
 import TreeGrid from './TreeGrid.vue'
-import {getCategories, addCate} from '../../api/api.js'
+import {getCategories, addCate, getCateById} from '../../api/api.js'
 
 export default {
   data () {
@@ -59,11 +83,14 @@ export default {
         label: 'cat_name'
       },
       dialogVisible4Add: false,
+      dialogVisible4Edit: false,
       cateList: [],
+      ecateList: [],
       selectedOptions: [],
       cate: {
         cat_name: ''
       },
+      ecate: {},
       columns: [{
         text: '分类名称',
         dataIndex: 'cat_name',
@@ -123,6 +150,24 @@ export default {
     },
     showEditForm (cid) {
       console.log(cid)
+      // 编辑分类第一步
+      // 获取分类下拉列表数据
+      getCategories().then(res => {
+        if (res.meta.status === 200) {
+          this.ecateList = res.data
+          // 获取数据后调用获取分类信息接口
+          return getCateById({id: cid})
+        }
+      }).then(res => {
+        if (res.meta.status === 200) {
+          // 把数据填充到表单
+          this.ecate = res.data
+          this.dialogVisible4Edit = true
+        }
+      })
+    },
+    submitCate4Edit () {
+      console.log(this.ecate)
     },
     deleteCategory (cid) {
       console.log(cid)
@@ -150,7 +195,7 @@ export default {
 }
 
 </script>
-<style>
+<style >
     .el-breadcrumb {
       background-color: #D3DCE6;
       height: 50px;
