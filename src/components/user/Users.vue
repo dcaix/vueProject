@@ -48,6 +48,11 @@
         </template>
     </el-table-column>
     <el-table-column
+        prop="role_name"
+        label="角色名称"
+        width='150'>
+      </el-table-column>
+    <el-table-column
     width ='300'
     prop="address"
     label="操作">
@@ -286,7 +291,7 @@ export default {
       })
     },
     giveUserRole (data) {
-    // 获取当前用户的编辑角色对话框
+      // 获取当前用户的编辑角色对话框
       this.dialogVisible4Role = true
       this.currentUser = data
       // 初始化下拉选项数据
@@ -307,6 +312,7 @@ export default {
             type: 'success',
             message: res.meta.msg
           })
+          this.userList()
         }
       })
     }

@@ -130,3 +130,16 @@ export const rightList = (params) => {
     return res.data
   })
 }
+// 商品管理-分类列表
+export const getCategories = (params) => {
+  return axios.get('categories', {params}).then(res => {
+    return res.data
+  })
+}
+
+// 商品管理-添加分类
+export const addCate = (params) => {
+  return axios.post('categories', params).then(res => {
+    return res.data
+  })
+}
